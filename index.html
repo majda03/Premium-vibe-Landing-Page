@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vesper Air — Private Aviation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #070707;
+      --deep: #101010;
+      --soft-black: #171717;
+      --white: #f7f3ea;
+      --muted: #b8b0a2;
+      --gold: #c6a86a;
+      --line: rgba(255, 255, 255, .12);
+      --max: 1440px;
+      --serif: "Cormorant Garamond", serif;
+      --sans: "Inter", sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--sans);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(198,168,106,.10), transparent 24%),
+        radial-gradient(circle at 80% 40%, rgba(255,255,255,.035), transparent 20%),
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: auto, auto, 80px 80px, 80px 80px;
+      opacity: .55;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .container {
+      width: min(calc(100% - 40px), var(--max));
+      margin: 0 auto;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 998;
+      pointer-events: none;
+      opacity: .055;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: #050505;
+      display: grid;
+      place-items: center;
+      transition: opacity .9s ease, visibility .9s ease;
+    }
+
+    .loader.hide {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-mark {
+      font-family: var(--serif);
+      font-size: clamp(42px, 8vw, 96px);
+      letter-spacing: .18em;
+      font-weight: 500;
+    }
+
+    .loader-line {
+      margin: 28px auto 0;
+      width: 180px;
+      height: 1px;
+      background: rgba(255,255,255,.14);
+      overflow: hidden;
+    }
+
+    .loader-line span {
+      display: block;
+      height: 100%;
+      width: 40%;
+      background: var(--gold);
+      animation: load 1.5s ease-in-out infinite;
+    }
+
+    @keyframes load {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(260%); }
+    }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 22px 0;
+      border-bottom: 1px solid transparent;
+      transition: .35s ease;
+    }
+
+    .nav.scrolled {
+      background: rgba(7, 7, 7, .78);
+      backdrop-filter: blur(22px);
+      border-color: rgba(255,255,255,.08);
+      padding: 14px 0;
+    }
+
+    .nav-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: .22em;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-family: var(--serif);
+      font-size: 18px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 34px;
+      color: rgba(247,243,234,.72);
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .nav-links a {
+      position: relative;
+      transition: color .25s ease;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width .25s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      padding: 12px 18px;
+      border: 1px solid rgba(198,168,106,.55);
+      color: var(--gold);
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      transition: .3s ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--gold);
+      color: #111;
+      transform: translateY(-2px);
+    }
+
+    .hero {
+      min-height: 100svh;
+      position: relative;
+      display: grid;
+      align-items: end;
+      overflow: hidden;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,.3), rgba(0,0,0,.96)),
+        url("https://images.unsplash.com/photo-1540962351504-03099e0a754b?auto=format&fit=crop&w=2400&q=90") center/cover;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 65% 35%, transparent 0 18%, rgba(0,0,0,.50) 54%),
+        linear-gradient(to right, rgba(0,0,0,.92), rgba(0,0,0,.18) 54%, rgba(0,0,0,.82));
+      z-index: 1;
+    }
+
+    .hero-orb {
+      position: absolute;
+      right: 12%;
+      top: 20%;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(198,168,106,.16), transparent 62%);
+      filter: blur(12px);
+      animation: float 8s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-24px) scale(1.04); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 180px 0 76px;
+      max-width: 980px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 56px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 500;
+      line-height: .9;
+      letter-spacing: -.055em;
+      font-size: clamp(74px, 10.5vw, 178px);
+      max-width: 1100px;
+    }
+
+    .hero-text {
+      margin-top: 34px;
+      max-width: 610px;
+      color: rgba(247,243,234,.72);
+      font-size: clamp(16px, 1.35vw, 20px);
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-top: 44px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 16px 24px;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      transition: .35s ease;
+    }
+
+    .btn-primary {
+      background: var(--white);
+      color: #111;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold);
+      transform: translateY(-3px);
+      box-shadow: 0 18px 70px rgba(198,168,106,.22);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.055);
+      color: var(--white);
+      border-color: rgba(255,255,255,.12);
+      backdrop-filter: blur(16px);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(198,168,106,.55);
+      color: var(--gold);
+      transform: translateY(-3px);
+    }
+
+    .hero-stats {
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(7,7,7,.48);
+      backdrop-filter: blur(18px);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat {
+      padding: 28px;
+      border-right: 1px solid rgba(255,255,255,.10);
+    }
+
+    .stat:last-child {
+      border-right: 0;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 44px;
+      font-weight: 500;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    section {
+      padding: 140px 0;
+      position: relative;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      align-items: end;
+      margin-bottom: 70px;
+    }
+
+    .section-kicker {
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      font-size: 12px;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(44px, 6vw, 96px);
+      font-weight: 500;
+      line-height: .95;
+      letter-spacing: -.04em;
+      max-width: 850px;
+    }
+
+    .section-copy {
+      color: rgba(247,243,234,.68);
+      max-width: 440px;
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    .manifest {
+      background: linear-gradient(to bottom, #070707, #101010);
+    }
+
+    .manifest-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 72px;
+      align-items: center;
+    }
+
+    .manifest-card {
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.045);
+      padding: 42px;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .manifest-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 70% 20%, rgba(198,168,106,.15), transparent 35%);
+      pointer-events: none;
+    }
+
+    .manifest-card p {
+      position: relative;
+      color: rgba(247,243,234,.72);
+      line-height: 1.9;
+      max-width: 470px;
+    }
+
+    .manifest-number {
+      position: relative;
+      font-family: var(--serif);
+      font-size: 110px;
+      color: rgba(198,168,106,.42);
+      line-height: 1;
+    }
+
+    .manifest-lines {
+      display: grid;
+      gap: 18px;
+    }
+
+    .manifest-line {
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      font-family: var(--serif);
+      font-size: clamp(32px, 4.2vw, 72px);
+      line-height: .98;
+      letter-spacing: -.035em;
+      color: rgba(247,243,234,.90);
+      transform: translateY(30px);
+      opacity: 0;
+      transition: .8s ease;
+    }
+
+    .manifest-line.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .fleet {
+      background: #0b0b0b;
+    }
+
+    .fleet-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .jet-card {
+      position: relative;
+      min-height: 680px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: #111;
+    }
+
+    .jet-card.small {
+      min-height: 327px;
+    }
+
+    .jet-card img {
+      height: 100%;
+      filter: saturate(.85) contrast(1.05);
+      transition: transform 1.4s ease, filter 1.4s ease;
+    }
+
+    .jet-card:hover img {
+      transform: scale(1.06);
+      filter: saturate(1) contrast(1.12);
+    }
+
+    .jet-info {
+      position: absolute;
+      inset: auto 0 0;
+      padding: 34px;
+      background: linear-gradient(to top, rgba(0,0,0,.92), transparent);
+    }
+
+    .jet-info h3 {
+      font-family: var(--serif);
+      font-size: 42px;
+      font-weight: 500;
+    }
+
+    .jet-meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-top: 12px;
+    }
+
+    .split-stack {
+      display: grid;
+      gap: 26px;
+    }
+
+    .experience {
+      background:
+        linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.92)),
+        url("https://images.unsplash.com/photo-1521790361543-f645cf042ec4?auto=format&fit=crop&w=2200&q=90") center/cover fixed;
+    }
+
+    .experience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 60px;
+    }
+
+    .service-card {
+      min-height: 330px;
+      padding: 34px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.045);
+      backdrop-filter: blur(18px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: .35s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(198,168,106,.45);
+      background: rgba(255,255,255,.07);
+    }
+
+    .service-card span {
+      color: var(--gold);
+      font-family: var(--serif);
+      font-size: 54px;
+    }
+
+    .service-card h3 {
+      font-family: var(--serif);
+      font-size: 34px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .service-card p {
+      color: rgba(247,243,234,.65);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .destinations {
+      background: #080808;
+      overflow: hidden;
+    }
+
+    .marquee {
+      display: flex;
+      gap: 22px;
+      width: max-content;
+      animation: marquee 28s linear infinite;
+      margin-top: 60px;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .destination-card {
+      width: 420px;
+      height: 520px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      flex: 0 0 auto;
+    }
+
+    .destination-card img {
+      height: 100%;
+      filter: grayscale(.18) contrast(1.08);
+      transition: transform 1.2s ease;
+    }
+
+    .destination-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .destination-card div {
+      position: absolute;
+      inset: auto 0 0;
+      padding: 28px;
+      background: linear-gradient(to top, rgba(0,0,0,.88), transparent);
+    }
+
+    .destination-card h3 {
+      font-family: var(--serif);
+      font-size: 44px;
+      font-weight: 500;
+    }
+
+    .destination-card p {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .membership {
+      background: linear-gradient(to bottom, #080808, #121212);
+    }
+
+    .membership-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .membership-panel {
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      padding: 46px;
+      min-height: 650px;
+      position: sticky;
+      top: 120px;
+      overflow: hidden;
+    }
+
+    .membership-panel::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: rgba(198,168,106,.10);
+      right: -140px;
+      top: -120px;
+      filter: blur(10px);
+    }
+
+    .membership-panel h2 {
+      font-family: var(--serif);
+      font-size: clamp(44px, 5vw, 82px);
+      font-weight: 500;
+      line-height: .95;
+      letter-spacing: -.04em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .membership-panel p {
+      margin-top: 28px;
+      color: rgba(247,243,234,.68);
+      line-height: 1.9;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tiers {
+      display: grid;
+      gap: 18px;
+    }
+
+    .tier {
+      border: 1px solid rgba(255,255,255,.11);
+      background: rgba(255,255,255,.035);
+      padding: 32px;
+      transition: .35s ease;
+    }
+
+    .tier:hover {
+      border-color: rgba(198,168,106,.45);
+      transform: translateX(8px);
+    }
+
+    .tier-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: baseline;
+      margin-bottom: 18px;
+    }
+
+    .tier h3 {
+      font-family: var(--serif);
+      font-size: 36px;
+      font-weight: 500;
+    }
+
+    .tier small {
+      color: var(--gold);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .tier p {
+      color: rgba(247,243,234,.64);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .quote {
+      padding: 160px 0;
+      background:
+        linear-gradient(to right, rgba(0,0,0,.96), rgba(0,0,0,.42)),
+        url("https://images.unsplash.com/photo-1542296332-2e4473faf563?auto=format&fit=crop&w=2400&q=90") center/cover;
+    }
+
+    .quote blockquote {
+      font-family: var(--serif);
+      font-size: clamp(48px, 7vw, 110px);
+      line-height: .95;
+      letter-spacing: -.045em;
+      max-width: 1050px;
+    }
+
+    .quote p {
+      margin-top: 34px;
+      color: var(--gold);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .case-study {
+      background: #0b0b0b;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .detail {
+      padding: 34px;
+      border-right: 1px solid rgba(255,255,255,.12);
+      min-height: 190px;
+    }
+
+    .detail:last-child {
+      border-right: 0;
+    }
+
+    .detail span {
+      display: block;
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .detail strong {
+      display: block;
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 32px;
+      line-height: 1.05;
+    }
+
+    .cta {
+      padding: 180px 0;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(198,168,106,.16), transparent 30%),
+        #070707;
+    }
+
+    .cta h2 {
+      font-family: var(--serif);
+      font-size: clamp(58px, 8vw, 132px);
+      font-weight: 500;
+      line-height: .9;
+      letter-spacing: -.055em;
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+
+    .cta p {
+      color: rgba(247,243,234,.68);
+      line-height: 1.9;
+      max-width: 600px;
+      margin: 32px auto 42px;
+    }
+
+    .footer {
+      border-top: 1px solid rgba(255,255,255,.10);
+      padding: 46px 0;
+      background: #050505;
+    }
+
+    .footer-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      color: rgba(247,243,234,.55);
+      font-size: 13px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(42px);
+      transition: opacity .9s ease, transform .9s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .nav-links {
+        display: none;
+      }
+
+      .stats-grid,
+      .experience-grid,
+      .details-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .manifest-grid,
+      .fleet-grid,
+      .membership-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .membership-panel {
+        position: relative;
+        top: 0;
+        min-height: auto;
+      }
+
+      .jet-card,
+      .jet-card.small {
+        min-height: 520px;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-copy {
+        margin-top: 24px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(calc(100% - 26px), var(--max));
+      }
+
+      section {
+        padding: 96px 0;
+      }
+
+      .hero-content {
+        padding: 150px 0 58px;
+      }
+
+      .hero-actions {
+        align-items: stretch;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stats-grid,
+      .experience-grid,
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat,
+      .detail {
+        border-right: 0;
+        border-bottom: 1px solid rgba(255,255,255,.10);
+      }
+
+      .destination-card {
+        width: 300px;
+        height: 420px;
+      }
+
+      .manifest-card,
+      .membership-panel,
+      .tier,
+      .service-card {
+        padding: 26px;
+      }
+
+      .footer-wrap {
+        display: block;
+      }
+
+      .footer-wrap p:last-child {
+        margin-top: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="loader">
+    <div>
+      <div class="loader-mark">VESPER</div>
+      <div class="loader-line"><span></span></div>
+    </div>
+  </div>
+
+  <div class="noise"></div>
+
+  <nav class="nav">
+    <div class="container nav-wrap">
+      <a href="#" class="brand">
+        <span class="brand-mark">V</span>
+        <span>Vesper Air</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#fleet">Fleet</a>
+        <a href="#experience">Experience</a>
+        <a href="#membership">Membership</a>
+        <a href="#case">Case Study</a>
+      </div>
+
+      <a href="#membership" class="nav-cta">Request Access</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-orb"></div>
+
+    <div class="container hero-content">
+      <div class="eyebrow reveal">Private Aviation / Concept Brand 01</div>
+
+      <h1 class="reveal">Luxury is measured in time.</h1>
+
+      <p class="hero-text reveal">
+        Vesper Air is a fictional private aviation house designed for people who do not buy flights.
+        They buy silence, precision and the freedom to arrive before the world expects them.
+      </p>
+
+      <div class="hero-actions reveal">
+        <a href="#membership" class="btn btn-primary">Request Membership →</a>
+        <a href="#fleet" class="btn btn-secondary">Explore Fleet</a>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="container stats-grid">
+        <div class="stat">
+          <strong data-count="42">0</strong>
+          <span>Private Aircraft</span>
+        </div>
+
+        <div class="stat">
+          <strong data-count="87">0</strong>
+          <span>Global Routes</span>
+        </div>
+
+        <div class="stat">
+          <strong data-count="24">0</strong>
+          <span>Hour Concierge</span>
+        </div>
+
+        <div class="stat">
+          <strong data-count="1">0</strong>
+          <span>Design Concept</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="manifest">
+      <div class="container manifest-grid">
+        <div class="manifest-card reveal">
+          <div class="manifest-number">01</div>
+
+          <p>
+            Vesper Air was created around one belief: luxury should never feel loud.
+            The interface is restrained, cinematic and intentionally spacious, built to create trust
+            before a single conversation takes place.
+          </p>
+        </div>
+
+        <div class="manifest-lines">
+          <div class="manifest-line">Luxury is not gold.</div>
+          <div class="manifest-line">Luxury is silence.</div>
+          <div class="manifest-line">Luxury is never waiting.</div>
+          <div class="manifest-line">Luxury is owning your time.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="fleet" id="fleet">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker reveal">The Fleet</div>
+            <h2 class="section-title reveal">Aircraft selected for privacy, range and presence.</h2>
+          </div>
+
+          <p class="section-copy reveal">
+            Every aircraft page is designed like a luxury product reveal: minimal information,
+            cinematic imagery and a calm hierarchy that makes high-value decisions feel effortless.
+          </p>
+        </div>
+
+        <div class="fleet-grid">
+          <article class="jet-card reveal">
+            <img src="https://images.unsplash.com/photo-1540962351504-03099e0a754b?auto=format&fit=crop&w=1800&q=90" alt="Private jet on runway">
+
+            <div class="jet-info">
+              <h3>Gulfstream Reserve</h3>
+              <div class="jet-meta">
+                <span>14 Guests</span>
+                <span>Ultra Long Range</span>
+                <span>Private Suite</span>
+              </div>
+            </div>
+          </article>
+
+          <div class="split-stack">
+            <article class="jet-card small reveal">
+              <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=1200&q=90" alt="Aircraft interior">
+
+              <div class="jet-info">
+                <h3>Cabin One</h3>
+                <div class="jet-meta">
+                  <span>Silence</span>
+                  <span>Privacy</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="jet-card small reveal">
+              <img src="https://images.unsplash.com/photo-1556388158-158ea5ccacbd?auto=format&fit=crop&w=1200&q=90" alt="Aircraft wing above clouds">
+
+              <div class="jet-info">
+                <h3>Above Hours</h3>
+                <div class="jet-meta">
+                  <span>Global</span>
+                  <span>On Demand</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="experience" id="experience">
+      <div class="container">
+        <div class="section-kicker reveal">The Experience</div>
+        <h2 class="section-title reveal">Designed for the kind of client who expects everything before asking.</h2>
+
+        <div class="experience-grid">
+          <article class="service-card reveal">
+            <span>01</span>
+            <div>
+              <h3>Private Concierge</h3>
+              <p>From ground transfer to dining reservations, every detail is arranged before departure.</p>
+            </div>
+          </article>
+
+          <article class="service-card reveal">
+            <span>02</span>
+            <div>
+              <h3>Silent Check-In</h3>
+              <p>No queues. No waiting rooms. No noise. Just arrival, movement and departure.</p>
+            </div>
+          </article>
+
+          <article class="service-card reveal">
+            <span>03</span>
+            <div>
+              <h3>Global Access</h3>
+              <p>Routes are crafted for founders, artists and private families moving between worlds.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="destinations">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker reveal">Destinations</div>
+            <h2 class="section-title reveal">From Monaco evenings to Dubai mornings.</h2>
+          </div>
+
+          <p class="section-copy reveal">
+            The design language follows the same rhythm: restrained, expensive, cinematic.
+            Every city card feels like an invitation, not an advertisement.
+          </p>
+        </div>
+      </div>
+
+      <div class="marquee">
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=900&q=90" alt="Dubai">
+          <div>
+            <h3>Dubai</h3>
+            <p>Business / Desert / Gold</p>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=90" alt="Monaco">
+          <div>
+            <h3>Monaco</h3>
+            <p>Harbor / Night / Privacy</p>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=900&q=90" alt="New York">
+          <div>
+            <h3>New York</h3>
+            <p>Capital / Speed / Power</p>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=90" alt="Paris">
+          <div>
+            <h3>Paris</h3>
+            <p>Culture / Legacy / Taste</p>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=900&q=90" alt="Dubai">
+          <div>
+            <h3>Dubai</h3>
+            <p>Business / Desert / Gold</p>
+          </div>
+        </div>
+
+        <div class="destination-card">
+          <img src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=90" alt="Monaco">
+          <div>
+            <h3>Monaco</h3>
+            <p>Harbor / Night / Privacy</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="membership" id="membership">
+      <div class="container membership-wrap">
+        <div class="membership-panel reveal">
+          <div class="section-kicker">Membership</div>
+          <h2>Access should feel earned.</h2>
+
+          <p>
+            Instead of a generic booking page, Vesper uses an invitation-based structure.
+            That small UX decision makes the brand feel private, selective and more expensive.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#case" class="btn btn-primary">View Design Logic →</a>
+          </div>
+        </div>
+
+        <div class="tiers">
+          <article class="tier reveal">
+            <div class="tier-top">
+              <h3>Reserve</h3>
+              <small>Entry Access</small>
+            </div>
+            <p>For private clients who need selective access to executive aircraft and concierge planning.</p>
+          </article>
+
+          <article class="tier reveal">
+            <div class="tier-top">
+              <h3>Signature</h3>
+              <small>Preferred</small>
+            </div>
+            <p>For founders and families with recurring international travel and personal route preferences.</p>
+          </article>
+
+          <article class="tier reveal">
+            <div class="tier-top">
+              <h3>Sovereign</h3>
+              <small>Invitation Only</small>
+            </div>
+            <p>For clients who expect availability, discretion and complete end-to-end travel orchestration.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="quote">
+      <div class="container reveal">
+        <blockquote>“The most expensive thing in the world is not a jet. It is wasted time.”</blockquote>
+        <p>Vesper Air Brand Philosophy</p>
+      </div>
+    </section>
+
+    <section class="case-study" id="case">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker reveal">Project Details</div>
+            <h2 class="section-title reveal">Concept brand created for premium digital positioning.</h2>
+          </div>
+
+          <p class="section-copy reveal">
+            This fictional luxury aviation brand was designed to show how visual restraint,
+            elegant typography and slow interaction can build instant trust.
+          </p>
+        </div>
+
+        <div class="details-grid reveal">
+          <div class="detail">
+            <span>Industry</span>
+            <strong>Private Aviation</strong>
+          </div>
+
+          <div class="detail">
+            <span>Brand Type</span>
+            <strong>Fictional Concept</strong>
+          </div>
+
+          <div class="detail">
+            <span>Role</span>
+            <strong>UI Design / Frontend</strong>
+          </div>
+
+          <div class="detail">
+            <span>Goal</span>
+            <strong>Build Instant Trust</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container reveal">
+        <div class="section-kicker">Coded Vibrations Concept Series</div>
+
+        <h2>Designing brands that don't exist.</h2>
+
+        <p>
+          Vesper Air is part of a premium concept series exploring how fictional brands can feel real,
+          desirable and commercially trustworthy through high-end digital design.
+        </p>
+
+        <a href="#" class="btn btn-primary">Return To Top ↑</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-wrap">
+      <p>VESPER AIR — Fictional Private Aviation Concept</p>
+      <p>Designed & Developed by Coded Vibrations</p>
+    </div>
+  </footer>
+
+  <script>
+    const loader = document.querySelector(".loader");
+    const nav = document.querySelector(".nav");
+    const reveals = document.querySelectorAll(".reveal");
+    const manifestLines = document.querySelectorAll(".manifest-line");
+    const counters = document.querySelectorAll("[data-count]");
+
+    window.addEventListener("load", () => {
+      setTimeout(() => loader.classList.add("hide"), 900);
+    });
+
+    window.addEventListener("scroll", () => {
+      nav.classList.toggle("scrolled", window.scrollY > 40);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.14 });
+
+    reveals.forEach((el) => observer.observe(el));
+
+    const lineObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          manifestLines.forEach((line, index) => {
+            setTimeout(() => line.classList.add("show"), index * 170);
+          });
+        }
+      });
+    }, { threshold: 0.25 });
+
+    const manifestSection = document.querySelector(".manifest-lines");
+    if (manifestSection) lineObserver.observe(manifestSection);
+
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        counters.forEach((counter) => {
+          const target = Number(counter.dataset.count);
+          let current = 0;
+          const increment = Math.max(1, Math.ceil(target / 70));
+
+          const update = () => {
+            current += increment;
+
+            if (current >= target) {
+              counter.textContent = String(target).padStart(2, "0");
+            } else {
+              counter.textContent = String(current).padStart(2, "0");
+              requestAnimationFrame(update);
+            }
+          };
+
+          update();
+        });
+
+        counterObserver.disconnect();
+      });
+    }, { threshold: 0.4 });
+
+    const stats = document.querySelector(".hero-stats");
+    if (stats) counterObserver.observe(stats);
+
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", function(e) {
+        const target = document.querySelector(this.getAttribute("href"));
+        if (!target) return;
+
+        e.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  </script>
+</body>
+</html>
